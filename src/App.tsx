@@ -1,40 +1,40 @@
 import { useState } from "react";
 
-type Player = "player1" | "player2" | "empty";
+type Player = "X" | "O" | "empty";
 
 const initialState: Player[] = [
+  "O",
   "empty",
-  "player1",
-  "player2",
-  "player2",
-  "player1",
+  "O",
+  "X",
+  "X",
   "empty",
-  "player1",
+  "X",
   "empty",
-  "player2",
+  "empty",
 ];
 
 interface Moves {
-  player1?: number;
-  player2?: number;
+  X?: number;
+  O?: number;
   empty?: number;
 }
 
 // player(s): function that returns whick player to move in state s
 function player(s: Player[]): Player {
   const moves = s.reduce((acc: Moves, item) => {
-    if (item === "player1") {
-      if (!acc["player1"]) {
-        acc["player1"] = 1;
+    if (item === "X") {
+      if (!acc["X"]) {
+        acc["X"] = 1;
       } else {
-        acc["player1"] = acc["player1"] + 1;
+        acc["X"] = acc["X"] + 1;
       }
     }
-    if (item === "player2") {
-      if (!acc["player2"]) {
-        acc["player2"] = 1;
+    if (item === "O") {
+      if (!acc["O"]) {
+        acc["O"] = 1;
       } else {
-        acc["player2"] = acc["player2"] + 1;
+        acc["O"] = acc["O"] + 1;
       }
     }
     if (item === "empty") {
@@ -46,9 +46,8 @@ function player(s: Player[]): Player {
     }
     return acc;
   }, {});
-  if (moves["empty"] === 9) return "player1";
-  const nextPlayer =
-    (moves["player1"] ?? 0) > (moves["player2"] ?? 0) ? "player2" : "player1";
+  if (moves["empty"] === 9) return "X";
+  const nextPlayer = (moves["X"] ?? 0) > (moves["O"] ?? 0) ? "O" : "X";
   return nextPlayer;
 }
 
@@ -63,7 +62,7 @@ function actions(s: Player[]): number[] {
   return actions;
 }
 
-console.log("actions", actions(initialState));
+// console.log("actions", actions(initialState));
 
 // function result(s,a): function that returns state after action a taken in state s
 function result(s: Player[], a: number): Player[] {
@@ -83,7 +82,7 @@ const WINNING_STRATEGIES = [
   [2, 4, 6],
 ];
 // function noEmpty(s): checks if state s has no empty cells
-function noEmpty(s: Player[]): boolean {
+function isGameBoardFull(s: Player[]): boolean {
   return s.every((item) => item !== "empty");
 }
 // function winner(s,p): checks if player p has won in state s
@@ -95,70 +94,90 @@ function noEmpty(s: Player[]): boolean {
 // }
 
 // function winner(s): checks if state s has a winner
-function winningState(s: Player[]): boolean {
+function isWinningState(s: Player[]): boolean {
   return WINNING_STRATEGIES.some((strategy) => {
     const [a, b, c] = strategy;
     return (
-      (s[a] === "player1" && s[b] === "player1" && s[c] === "player1") ||
-      (s[a] === "player2" && s[b] === "player2" && s[c] === "player2")
+      (s[a] === "X" && s[b] === "X" && s[c] === "X") ||
+      (s[a] === "O" && s[b] === "O" && s[c] === "O")
     );
   });
 }
 // function terminal(s): checks if state s is a terminal state
 function terminal(s: Player[]): boolean {
-  return winningState(s) || noEmpty(s);
+  return isWinningState(s) || isGameBoardFull(s);
 }
 
-console.log("terminal", terminal(initialState));
-console.log("winner", winningState(initialState));
-console.log("nextPlayer", player(initialState));
-console.log("utility:", utility(initialState));
+// console.log("terminal", terminal(initialState));
+// console.log("winner", winningState(initialState));
+// console.log("nextPlayer", player(initialState));
+// console.log("utility:", utility(initialState));
 
 // function utility(s): final numerical value for a terminal state s
 function utility(s: Player[]): number {
-  if (noEmpty(s)) return 0;
-  if (player(s) === "player1") return -1;
-  if (player(s) === "player2") return 1;
-  throw new Error("Utility called on non-terminal state");
+  if (isWinningState(s) && player(s) === "X") return -1;
+  if (isWinningState(s) && player(s) === "O") return 1;
+  return 0;
+  // throw new Error("Utility called on non-terminal state");
 }
 
 // Given a state s:
-//player1(max player) picks action a in Actions(s) that produces highest value of minValue(RESULT(s,a))
-//player2(min player) picks action a in Actions(s) that produces smallest value of maxValue(RESULT(s,a))
+//X(max player) picks action a in Actions(s) that produces highest value of minValue(RESULT(s,a))
+//O(min player) picks action a in Actions(s) that produces smallest value of maxValue(RESULT(s,a))
 
-function maxValue(s: Player[]): number {
-  if (terminal(s)) return utility(s);
-  let v = -Infinity;
-  // const results = [];
-  for (const a of actions(s)) {
-    v = Math.max(v, minValue(result(s, a)));
-    // results.push({ a, v });
-  }
-  return v;
+interface MinMaxValue {
+  value: number;
+  results: Move[];
+}
+interface Move {
+  action: number;
+  value: number;
 }
 
-interface MinValue {
-  v: number;
-  a: number;
-}
-
-function minValue(s: Player[]): number {
-  if (terminal(s)) return utility(s);
-  let v = Infinity;
-  const results: MinValue[] = [];
-  for (const a of actions(s)) {
-    v = Math.min(v, maxValue(result(s, a)));
-    results.push({ a, v });
-  }
-  const minValue = results.find((el) => el.v === v);
-  const nextMove = minValue.a;
-  return v;
-}
-
-console.log("endMinValue", minValue(initialState));
-// console.log("endMaxValue", maxValue(initialState));
 function App(): JSX.Element {
   const [gameState, setGameState] = useState<string[]>(initialState);
+
+  function maxValue(s: Player[]): MinMaxValue {
+    if (terminal(s)) return { value: utility(s), results: [] };
+    const v: MinMaxValue = { value: -Infinity, results: [] };
+    for (const a of actions(s)) {
+      const min: MinMaxValue = minValue(result(s, a));
+      v.value = Math.max(v.value, min.value);
+      v.results.push({ action: a, value: min.value });
+    }
+    return v;
+  }
+
+  function minValue(s: Player[]): MinMaxValue {
+    if (terminal(s)) return { value: utility(s), results: [] };
+    const v: MinMaxValue = { value: Infinity, results: [] };
+    for (const a of actions(s)) {
+      const max: MinMaxValue = maxValue(result(s, a));
+      v.value = Math.min(v.value, max.value);
+      v.results.push({ action: a, value: max.value });
+    }
+    return v;
+  }
+
+  console.log("initialState", initialState);
+  // console.log("minValue", minValue(initialState));
+  // console.log("gameState", gameState);
+  // console.log("maxValue", maxValue(initialState));
+  // const bestValue = maxValue(initialState);
+  // console.log("bestValue", bestValue);
+  // const nextMove = bestValue.results.find((el) => el.value === bestValue.value);
+  // console.log("nextMove", nextMove);
+  const bestValue = minValue(initialState);
+  console.log("bestValue", bestValue);
+  const nextMove = bestValue.results.find((el) => el.value === bestValue.value);
+  console.log("nextMove", nextMove);
+  const nextGameState = result(gameState, nextMove.action);
+  console.log("nextGameState", nextGameState);
+  // setGameState(nextGameState);
+  // console.log("terminal", terminal(initialState));
+  // console.log("winner", isWinningState(initialState));
+  // console.log(isGameBoardFull(initialState));
+  // console.log("nextPlayer", player(initialState));
   return (
     <>
       <h1>Hello world!</h1>
