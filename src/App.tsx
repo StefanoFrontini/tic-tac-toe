@@ -1,4 +1,7 @@
 import { useState } from "react";
+import PlayerScore from "./components/PlayerScore";
+import styles from "./App.module.scss";
+console.log(styles);
 
 type Player = "X" | "O" | "empty";
 
@@ -171,17 +174,32 @@ function App(): JSX.Element {
   console.log("bestValue", bestValue);
   const nextMove = bestValue.results.find((el) => el.value === bestValue.value);
   console.log("nextMove", nextMove);
-  const nextGameState = result(gameState, nextMove.action);
-  console.log("nextGameState", nextGameState);
+  // const nextGameState = result(gameState, nextMove.action);
+  // console.log("nextGameState", nextGameState);
   // setGameState(nextGameState);
   // console.log("terminal", terminal(initialState));
   // console.log("winner", isWinningState(initialState));
   // console.log(isGameBoardFull(initialState));
   // console.log("nextPlayer", player(initialState));
   return (
-    <>
-      <h1>Hello world!</h1>
-    </>
+    <div className="container">
+      <h1>Tic Tac Toe</h1>
+      <div className="scores">
+        <PlayerScore />
+        <PlayerScore />
+      </div>
+      <div className={styles.board}>
+        <div className={styles.board__cell}>1</div>
+        <div className={styles.board__cell}>2</div>
+        <div className={styles.board__cell}>3</div>
+        <div className={styles.board__cell}>4</div>
+        <div className={styles.board__cell}>5</div>
+        <div className={styles.board__cell}>6</div>
+        <div className={styles.board__cell}>7</div>
+        <div className={styles.board__cell}>8</div>
+        <div className={styles.board__cell}>9</div>
+      </div>
+    </div>
   );
 }
 
