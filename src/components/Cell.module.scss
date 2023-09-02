@@ -1,0 +1,22 @@
+.empty {
+  width: 90%;
+  aspect-ratio: 1;
+  //   border: 1rem solid var(--color-grey-light-1);
+}
+.cell {
+  border-bottom: 2rem solid var(--color-primary-dark);
+  border-right: 2rem solid var(--color-primary-dark);
+  width: 100%;
+  aspect-ratio: 1;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  &:nth-last-child(-n + 3) {
+    border-bottom: none;
+  }
+  &:nth-child(3n) {
+    border-right: none;
+  }
+}

@@ -1,6 +1,9 @@
 import { useState } from "react";
 import PlayerScore from "./components/PlayerScore";
 import styles from "./App.module.scss";
+import CrossIcon from "./components/CrossIcon";
+import CircleIcon from "./components/CircleIcon";
+import Cell from "./components/Cell";
 console.log(styles);
 
 type Player = "X" | "O" | "empty";
@@ -71,6 +74,11 @@ function actions(s: Player[]): number[] {
 function result(s: Player[], a: number): Player[] {
   const result = s.slice();
   result[a] = player(s);
+  return result;
+}
+function resultPlayerMove(s: Player[], a: number): Player[] {
+  const result = s.slice();
+  result[a] = "X";
   return result;
 }
 
@@ -162,7 +170,7 @@ function App(): JSX.Element {
     return v;
   }
 
-  console.log("initialState", initialState);
+  console.log("gameState", gameState);
   // console.log("minValue", minValue(initialState));
   // console.log("gameState", gameState);
   // console.log("maxValue", maxValue(initialState));
@@ -170,10 +178,9 @@ function App(): JSX.Element {
   // console.log("bestValue", bestValue);
   // const nextMove = bestValue.results.find((el) => el.value === bestValue.value);
   // console.log("nextMove", nextMove);
-  const bestValue = minValue(initialState);
-  console.log("bestValue", bestValue);
-  const nextMove = bestValue.results.find((el) => el.value === bestValue.value);
-  console.log("nextMove", nextMove);
+  // console.log("bestValue", bestValue);
+  // const nextMove = bestValue.results.find((el) => el.value === bestValue.value);
+  // console.log("nextMove", nextMove);
   // const nextGameState = result(gameState, nextMove.action);
   // console.log("nextGameState", nextGameState);
   // setGameState(nextGameState);
@@ -181,23 +188,45 @@ function App(): JSX.Element {
   // console.log("winner", isWinningState(initialState));
   // console.log(isGameBoardFull(initialState));
   // console.log("nextPlayer", player(initialState));
+  function computerMove() {
+    const bestValue = minValue(gameState);
+    const nextMove = bestValue.results.find(
+      (el) => el.value === bestValue.value
+    );
+    const nextGameState = result(gameState, nextMove.action);
+    setGameState(nextGameState);
+  }
+  function updateGameState(s: Player[]): void {
+    setGameState(s);
+  }
   return (
-    <div className="container">
-      <h1>Tic Tac Toe</h1>
+    <div className={styles.container}>
+      <header className={styles.header}>
+        <h1 className={styles.title}>Tic Tac Toe</h1>
+      </header>
       <div className="scores">
-        <PlayerScore />
-        <PlayerScore />
+        <span>Score 1</span>
+        <span>Score 2</span>
+        {/* <PlayerScore>
+          <CrossIcon />
+        </PlayerScore>
+        <PlayerScore>
+          <CircleIcon />
+        </PlayerScore> */}
       </div>
       <div className={styles.board}>
-        <div className={styles.board__cell}>1</div>
-        <div className={styles.board__cell}>2</div>
-        <div className={styles.board__cell}>3</div>
-        <div className={styles.board__cell}>4</div>
-        <div className={styles.board__cell}>5</div>
-        <div className={styles.board__cell}>6</div>
-        <div className={styles.board__cell}>7</div>
-        <div className={styles.board__cell}>8</div>
-        <div className={styles.board__cell}>9</div>
+        {gameState.map((el, index) => {
+          return (
+            <Cell
+              player={el}
+              key={index}
+              i={index}
+              gameState={gameState}
+              resultPlayerMove={resultPlayerMove}
+              updateGameState={updateGameState}
+            />
+          );
+        })}
       </div>
     </div>
   );

@@ -1,0 +1,13 @@
+.icon {
+  width: 100%;
+
+  fill: var(--color-grey-light-1);
+}
+
+.circle {
+  width: 75%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 2rem solid var(--color-grey-light-1);
+  box-shadow: var(--shadow-light);
+}
