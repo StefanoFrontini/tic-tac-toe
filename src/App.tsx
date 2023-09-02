@@ -1,10 +1,7 @@
 import { useState } from "react";
-import PlayerScore from "./components/PlayerScore";
+// import PlayerScore from "./components/PlayerScore";
 import styles from "./App.module.scss";
-import CrossIcon from "./components/CrossIcon";
-import CircleIcon from "./components/CircleIcon";
 import Cell from "./components/Cell";
-console.log(styles);
 
 type Player = "X" | "O" | "empty";
 
@@ -92,7 +89,7 @@ const WINNING_STRATEGIES = [
   [0, 4, 8],
   [2, 4, 6],
 ];
-// function noEmpty(s): checks if state s has no empty cells
+// function isGameBoardFull(s): checks if state s has no empty cells
 function isGameBoardFull(s: Player[]): boolean {
   return s.every((item) => item !== "empty");
 }

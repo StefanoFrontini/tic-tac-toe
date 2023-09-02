@@ -1,11 +1,11 @@
 .empty {
-  width: 90%;
+  width: 10%;
   aspect-ratio: 1;
   //   border: 1rem solid var(--color-grey-light-1);
 }
 .cell {
-  border-bottom: 2rem solid var(--color-primary-dark);
-  border-right: 2rem solid var(--color-primary-dark);
+  border-bottom: 1rem solid var(--color-primary-dark);
+  border-right: 1rem solid var(--color-primary-dark);
   width: 100%;
   aspect-ratio: 1;
 
