@@ -6,13 +6,13 @@ import Cell from "./components/Cell";
 type Player = "X" | "O" | "empty";
 
 const initialState: Player[] = [
-  "O",
   "empty",
-  "O",
-  "X",
-  "X",
   "empty",
-  "X",
+  "empty",
+  "empty",
+  "empty",
+  "empty",
+  "empty",
   "empty",
   "empty",
 ];
@@ -185,13 +185,22 @@ function App(): JSX.Element {
   // console.log("winner", isWinningState(initialState));
   // console.log(isGameBoardFull(initialState));
   // console.log("nextPlayer", player(initialState));
-  function computerMove() {
-    const bestValue = minValue(gameState);
-    const nextMove = bestValue.results.find(
-      (el) => el.value === bestValue.value
-    );
-    const nextGameState = result(gameState, nextMove.action);
-    setGameState(nextGameState);
+  function computerMove(s: Player[]): void {
+    const bestValue = minValue(s);
+    console.log("bestValue", bestValue);
+    function getMove() {
+      const bestMove = bestValue.results.find(
+        (el) => el.value === bestValue.value
+      );
+      // const secondBest = bestValue.results.find((el) => el.value === 1);
+      // console.log("bestMove", bestMove);
+      // if (bestMove.action === -1) return bestMove.action;
+      // if (!secondBest) return bestMove.action;
+      // return secondBest.action;
+      return bestMove.action;
+    }
+    // const nextGameState = result(gameState, nextMove.action);
+    setGameState((prevState) => result(prevState, getMove()));
   }
   function updateGameState(s: Player[]): void {
     setGameState(s);
@@ -221,6 +230,8 @@ function App(): JSX.Element {
               gameState={gameState}
               resultPlayerMove={resultPlayerMove}
               updateGameState={updateGameState}
+              result={result}
+              computerMove={computerMove}
             />
           );
         })}

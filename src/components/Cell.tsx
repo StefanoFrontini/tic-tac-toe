@@ -11,14 +11,19 @@ function Cell({
   gameState,
   updateGameState,
   resultPlayerMove,
+  result,
+  computerMove,
 }: CellProps): JSX.Element {
   const empty = player === "empty" && <div className={styles.empty}></div>;
   const X = player === "X" && <CrossIcon />;
   const Y = player === "O" && <CircleIcon />;
+
   function handleClick(): void {
-    const nextMove = resultPlayerMove(gameState, i);
+    const nextMove = result(gameState, i);
     updateGameState(nextMove);
+    setTimeout(() => computerMove(nextMove), 1000);
   }
+
   return (
     <div className={styles.cell} onClick={handleClick}>
       {empty}

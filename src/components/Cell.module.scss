@@ -5,6 +5,7 @@
 }
 .cell {
   border-bottom: 1rem solid var(--color-primary-dark);
+  // box-shadow: 0 0 0 1rem red;
   border-right: 1rem solid var(--color-primary-dark);
   width: 100%;
   aspect-ratio: 1;
@@ -13,10 +14,13 @@
   justify-content: center;
   align-items: center;
   padding: 2rem;
+  cursor: pointer;
   &:nth-last-child(-n + 3) {
     border-bottom: none;
   }
   &:nth-child(3n) {
     border-right: none;
+    padding-left: 2.5rem;
+    padding-right: 2.5rem;
   }
 }
