@@ -36,3 +36,9 @@
   -moz-background-clip: text;
   -moz-text-fill-color: transparent;
 }
+
+.scores {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}

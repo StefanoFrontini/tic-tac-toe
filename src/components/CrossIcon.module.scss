@@ -16,3 +16,11 @@
     border-radius: 5px;
   }
 }
+.small {
+  width: 2rem;
+  height: 0.3rem;
+  &::after {
+    width: 2rem;
+    height: 0.3rem;
+  }
+}

@@ -1,8 +1,11 @@
 import styles from "./CrossIcon.module.scss";
-function CrossIcon() {
+interface CrossIconProps {
+  small?: boolean;
+}
+function CrossIcon({ small = false }: CrossIconProps): JSX.Element {
   return (
     // <div className={styles.container}>
-    <div className={styles.cross}></div>
+    <div className={`${styles.cross} ${small && styles.small}`}></div>
     // </div>
     // <svg
     //   version="1.1"

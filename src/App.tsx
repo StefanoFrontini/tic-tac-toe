@@ -2,6 +2,7 @@ import { useState } from "react";
 // import PlayerScore from "./components/PlayerScore";
 import styles from "./App.module.scss";
 import Cell from "./components/Cell";
+import Score from "./components/Score";
 
 type Player = "X" | "O" | "empty";
 
@@ -210,16 +211,10 @@ function App(): JSX.Element {
       <header className={styles.header}>
         <h1 className={styles.title}>Tic Tac Toe</h1>
       </header>
-      <div className="scores">
-        <span>Score 1</span>
-        <span>Score 2</span>
-        {/* <PlayerScore>
-          <CrossIcon />
-        </PlayerScore>
-        <PlayerScore>
-          <CircleIcon />
-        </PlayerScore> */}
-      </div>
+      <section className={styles.scores}>
+        <Score player="X" score={2} />
+        <Score player="O" score={4} />
+      </section>
       <div className={styles.board}>
         {gameState.map((el, index) => {
           return (

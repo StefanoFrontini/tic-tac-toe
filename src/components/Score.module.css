@@ -1,0 +1,12 @@
+.score {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  /* background-color: aliceblue; */
+  border: 1px solid var(--color-primary-dark);
+  flex: 0 1 20%;
+}
+.wins {
+  font-size: 2rem;
+  color: var(--color-grey-dark-1);
+}
