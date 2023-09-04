@@ -1,19 +1,20 @@
 import { useState } from "react";
-// import PlayerScore from "./components/PlayerScore";
 import styles from "./App.module.scss";
 import Cell from "./components/Cell";
 import Score from "./components/Score";
+import GameInfo from "./components/GameInfo";
 
-type Player = "X" | "O" | "empty";
+type cellState = "X" | "O" | "empty";
+type Player = "X" | "O";
 
-const initialState: Player[] = [
+const initialState: cellState[] = [
+  "X",
+  "O",
   "empty",
+  "X",
+  "O",
   "empty",
-  "empty",
-  "empty",
-  "empty",
-  "empty",
-  "empty",
+  "X",
   "empty",
   "empty",
 ];
@@ -25,7 +26,7 @@ interface Moves {
 }
 
 // player(s): function that returns whick player to move in state s
-function player(s: Player[]): Player {
+function player(s: cellState[]): Player {
   const moves = s.reduce((acc: Moves, item) => {
     if (item === "X") {
       if (!acc["X"]) {
@@ -56,7 +57,7 @@ function player(s: Player[]): Player {
 }
 
 // function actions(s): function that returns legal moves in state s
-function actions(s: Player[]): number[] {
+function actions(s: cellState[]): number[] {
   const actions = s.reduce((acc: number[], item, index) => {
     if (item === "empty") {
       acc.push(index);
@@ -66,15 +67,13 @@ function actions(s: Player[]): number[] {
   return actions;
 }
 
-// console.log("actions", actions(initialState));
-
 // function result(s,a): function that returns state after action a taken in state s
-function result(s: Player[], a: number): Player[] {
+function result(s: cellState[], a: number): cellState[] {
   const result = s.slice();
   result[a] = player(s);
   return result;
 }
-function resultPlayerMove(s: Player[], a: number): Player[] {
+function resultPlayerMove(s: cellState[], a: number): cellState[] {
   const result = s.slice();
   result[a] = "X";
   return result;
@@ -91,19 +90,12 @@ const WINNING_STRATEGIES = [
   [2, 4, 6],
 ];
 // function isGameBoardFull(s): checks if state s has no empty cells
-function isGameBoardFull(s: Player[]): boolean {
+function isGameBoardFull(s: cellState[]): boolean {
   return s.every((item) => item !== "empty");
 }
-// function winner(s,p): checks if player p has won in state s
-// function winner(s: Player[], p: Player): boolean {
-//   return WINNING_STRATEGIES.some((strategy) => {
-//     const [a, b, c] = strategy;
-//     return s[a] === p && s[b] === p && s[c] === p;
-//   });
-// }
 
 // function winner(s): checks if state s has a winner
-function isWinningState(s: Player[]): boolean {
+function isWinningState(s: cellState[]): boolean {
   return WINNING_STRATEGIES.some((strategy) => {
     const [a, b, c] = strategy;
     return (
@@ -112,18 +104,23 @@ function isWinningState(s: Player[]): boolean {
     );
   });
 }
+// function that returns the winning strategy
+function winningStrategy(s: cellState[]): number[] {
+  return WINNING_STRATEGIES.find((strategy) => {
+    const [a, b, c] = strategy;
+    return (
+      (s[a] === "X" && s[b] === "X" && s[c] === "X") ||
+      (s[a] === "O" && s[b] === "O" && s[c] === "O")
+    );
+  });
+}
 // function terminal(s): checks if state s is a terminal state
-function terminal(s: Player[]): boolean {
+function terminal(s: cellState[]): boolean {
   return isWinningState(s) || isGameBoardFull(s);
 }
 
-// console.log("terminal", terminal(initialState));
-// console.log("winner", winningState(initialState));
-// console.log("nextPlayer", player(initialState));
-// console.log("utility:", utility(initialState));
-
 // function utility(s): final numerical value for a terminal state s
-function utility(s: Player[]): number {
+function utility(s: cellState[]): number {
   if (isWinningState(s) && player(s) === "X") return -1;
   if (isWinningState(s) && player(s) === "O") return 1;
   return 0;
@@ -142,11 +139,17 @@ interface Move {
   action: number;
   value: number;
 }
+interface PlayerScore {
+  X: number;
+  O: number;
+}
+const initialScore = { X: 0, O: 0 };
 
 function App(): JSX.Element {
-  const [gameState, setGameState] = useState<string[]>(initialState);
+  const [gameState, setGameState] = useState<cellState[]>(initialState);
+  const [playerScore, setPlayerScore] = useState<PlayerScore>(initialScore);
 
-  function maxValue(s: Player[]): MinMaxValue {
+  function maxValue(s: cellState[]): MinMaxValue {
     if (terminal(s)) return { value: utility(s), results: [] };
     const v: MinMaxValue = { value: -Infinity, results: [] };
     for (const a of actions(s)) {
@@ -157,7 +160,7 @@ function App(): JSX.Element {
     return v;
   }
 
-  function minValue(s: Player[]): MinMaxValue {
+  function minValue(s: cellState[]): MinMaxValue {
     if (terminal(s)) return { value: utility(s), results: [] };
     const v: MinMaxValue = { value: Infinity, results: [] };
     for (const a of actions(s)) {
@@ -168,74 +171,73 @@ function App(): JSX.Element {
     return v;
   }
 
-  console.log("gameState", gameState);
-  // console.log("minValue", minValue(initialState));
-  // console.log("gameState", gameState);
-  // console.log("maxValue", maxValue(initialState));
-  // const bestValue = maxValue(initialState);
-  // console.log("bestValue", bestValue);
-  // const nextMove = bestValue.results.find((el) => el.value === bestValue.value);
-  // console.log("nextMove", nextMove);
-  // console.log("bestValue", bestValue);
-  // const nextMove = bestValue.results.find((el) => el.value === bestValue.value);
-  // console.log("nextMove", nextMove);
-  // const nextGameState = result(gameState, nextMove.action);
-  // console.log("nextGameState", nextGameState);
-  // setGameState(nextGameState);
-  // console.log("terminal", terminal(initialState));
-  // console.log("winner", isWinningState(initialState));
-  // console.log(isGameBoardFull(initialState));
-  // console.log("nextPlayer", player(initialState));
-  function computerMove(s: Player[]): void {
+  function computerMove(s: cellState[]): void {
     const bestValue = minValue(s);
     console.log("bestValue", bestValue);
     function getMove() {
       const bestMove = bestValue.results.find(
         (el) => el.value === bestValue.value
       );
-      // const secondBest = bestValue.results.find((el) => el.value === 1);
-      // console.log("bestMove", bestMove);
-      // if (bestMove.action === -1) return bestMove.action;
-      // if (!secondBest) return bestMove.action;
-      // return secondBest.action;
       return bestMove.action;
     }
     // const nextGameState = result(gameState, nextMove.action);
-    setGameState((prevState) => result(prevState, getMove()));
+    setGameState((prevState) => {
+      const nextState = result(prevState, getMove());
+      if (isWinningState(nextState)) {
+        const winningPlayer = player(nextState) === "X" ? "O" : "X";
+        updateScore(playerScore, winningPlayer);
+      }
+      return nextState;
+    });
   }
-  function updateGameState(s: Player[]): void {
+  function updateGameState(s: cellState[]): void {
     setGameState(s);
   }
+  function handleRestart(): void {
+    setGameState(initialState);
+  }
+  function updateScore(score: PlayerScore, winningPlayer: Player): void {
+    const newScore = { ...score, [winningPlayer]: score[winningPlayer] + 1 };
+    setPlayerScore(newScore);
+  }
+  console.log(winningStrategy(initialState));
   return (
     <div className={styles.container}>
       <header className={styles.header}>
         <h1 className={styles.title}>Tic Tac Toe</h1>
       </header>
       <section className={styles.scores}>
-        <Score player="X" score={2} />
-        <Score player="O" score={4} />
+        <Score player="X" score={playerScore.X} />
+        <Score player="O" score={playerScore.O} />
       </section>
-      <section className={styles.info}>
-        <p>Start game or select player</p>
-      </section>
-      <main className={styles.board}>
-        {gameState.map((el, index) => {
-          return (
-            <Cell
-              player={el}
-              key={index}
-              i={index}
-              gameState={gameState}
-              resultPlayerMove={resultPlayerMove}
-              updateGameState={updateGameState}
-              result={result}
-              computerMove={computerMove}
-            />
-          );
-        })}
-      </main>
+      <GameInfo player={player(gameState)} isTerminal={terminal(gameState)} />
+      <div className={styles.main}>
+        <div className={styles.board}>
+          {gameState.map((el, index) => {
+            return (
+              <Cell
+                player={player}
+                icon={el}
+                key={index}
+                i={index}
+                gameState={gameState}
+                resultPlayerMove={resultPlayerMove}
+                updateGameState={updateGameState}
+                result={result}
+                computerMove={computerMove}
+                isWinningState={isWinningState}
+                updateScore={updateScore}
+                playerScore={playerScore}
+              />
+            );
+          })}
+        </div>
+        <div className={styles.divider}></div>
+      </div>
       <section className={styles.restart}>
-        <p>Restart game</p>
+        <button className={styles.button} onClick={handleRestart}>
+          Restart game
+        </button>
       </section>
     </div>
   );

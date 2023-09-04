@@ -1,27 +1,43 @@
 import CircleIcon from "./CircleIcon";
 import CrossIcon from "./CrossIcon";
 import styles from "./Cell.module.scss";
+type Player = "X" | "O";
+type cellState = "X" | "O" | "empty";
 interface CellProps {
-  player: string;
+  icon: string;
   i: number;
+  player: (s: cellState[]) => Player;
 }
 function Cell({
-  player,
+  icon,
   i,
   gameState,
   updateGameState,
-  resultPlayerMove,
   result,
   computerMove,
+  isWinningState,
+  updateScore,
+  playerScore,
+  player,
 }: CellProps): JSX.Element {
-  const empty = player === "empty" && <div className={styles.empty}></div>;
-  const X = player === "X" && <CrossIcon />;
-  const Y = player === "O" && <CircleIcon />;
+  const empty = icon === "empty" && <div className={styles.empty}></div>;
+  const X = icon === "X" && <CrossIcon />;
+  const Y = icon === "O" && <CircleIcon />;
 
   function handleClick(): void {
-    const nextMove = result(gameState, i);
-    updateGameState(nextMove);
-    setTimeout(() => computerMove(nextMove), 1000);
+    const nextState = result(gameState, i);
+    updateGameState(() => {
+      // const nextState = result(prevState, i);
+      if (isWinningState(nextState)) {
+        const winningPlayer = player(nextState) === "X" ? "O" : "X";
+        updateScore(playerScore, winningPlayer);
+      }
+      return nextState;
+    });
+    // updateGameState(nextMove);
+    if (!isWinningState(nextState)) {
+      setTimeout(() => computerMove(nextMove), 1000);
+    }
   }
 
   return (
