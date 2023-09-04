@@ -215,7 +215,10 @@ function App(): JSX.Element {
         <Score player="X" score={2} />
         <Score player="O" score={4} />
       </section>
-      <div className={styles.board}>
+      <section className={styles.info}>
+        <p>Start game or select player</p>
+      </section>
+      <main className={styles.board}>
         {gameState.map((el, index) => {
           return (
             <Cell
@@ -230,7 +233,10 @@ function App(): JSX.Element {
             />
           );
         })}
-      </div>
+      </main>
+      <section className={styles.restart}>
+        <p>Restart game</p>
+      </section>
     </div>
   );
 }
