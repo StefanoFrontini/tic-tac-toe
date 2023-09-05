@@ -1,6 +1,6 @@
-import CircleIcon from "./CircleIcon";
-import CrossIcon from "./CrossIcon";
-import styles from "./Score.module.css";
+import CircleIcon from "../../../components/CircleIcon";
+import CrossIcon from "../../../components/CrossIcon";
+import styles from "./Score.module.scss";
 
 interface ScoreProps {
   player: string;

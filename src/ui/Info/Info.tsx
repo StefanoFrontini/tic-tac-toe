@@ -1,16 +1,13 @@
-import styles from "./GameInfo.module.scss";
-import CircleIcon from "./CircleIcon";
-import CrossIcon from "./CrossIcon";
-interface GameInfoProps {
+import styles from "./Info.module.scss";
+import CircleIcon from "../../components/CircleIcon";
+import CrossIcon from "../../components/CrossIcon";
+
+interface InfoProps {
   player: string;
   isTerminal: boolean;
   isWinningState: boolean;
 }
-function GameInfo({
-  player,
-  isTerminal,
-  isWinningState,
-}: GameInfoProps): JSX.Element {
+function Info({ player, isTerminal, isWinningState }: InfoProps): JSX.Element {
   const icon =
     player === "X" ? <CrossIcon small={true} /> : <CircleIcon small={true} />;
   const winIcon =
@@ -26,4 +23,4 @@ function GameInfo({
   );
 }
 
-export default GameInfo;
+export default Info;
