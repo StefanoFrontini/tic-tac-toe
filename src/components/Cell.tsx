@@ -36,7 +36,7 @@ function Cell({
     });
     // updateGameState(nextMove);
     if (!isWinningState(nextState)) {
-      setTimeout(() => computerMove(nextMove), 1000);
+      setTimeout(() => computerMove(nextState), 1000);
     }
   }
 

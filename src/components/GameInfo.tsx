@@ -8,7 +8,6 @@ interface GameInfoProps {
 function GameInfo({ player, isTerminal }: GameInfoProps): JSX.Element {
   const icon =
     player === "X" ? <CrossIcon small={true} /> : <CircleIcon small={true} />;
-  console.log("isTerminal", isTerminal);
   return (
     <section className={styles.info}>
       {!isTerminal && icon}

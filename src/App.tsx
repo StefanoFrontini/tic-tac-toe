@@ -8,13 +8,13 @@ type cellState = "X" | "O" | "empty";
 type Player = "X" | "O";
 
 const initialState: cellState[] = [
-  "X",
-  "O",
   "empty",
-  "X",
-  "O",
   "empty",
-  "X",
+  "empty",
+  "empty",
+  "empty",
+  "empty",
+  "empty",
   "empty",
   "empty",
 ];
@@ -89,6 +89,16 @@ const WINNING_STRATEGIES = [
   [0, 4, 8],
   [2, 4, 6],
 ];
+const strategyMap = {
+  "[0,1,2]": "h1",
+  "[3,4,5]": "h2",
+  "[6,7,8]": "h3",
+  "[0,3,6]": "v1",
+  "[1,4,7]": "v2",
+  "[2,5,8]": "v3",
+  "[0,4,8]": "d1",
+  "[2,4,6]": "d2",
+};
 // function isGameBoardFull(s): checks if state s has no empty cells
 function isGameBoardFull(s: cellState[]): boolean {
   return s.every((item) => item !== "empty");
@@ -194,13 +204,20 @@ function App(): JSX.Element {
     setGameState(s);
   }
   function handleRestart(): void {
+    console.log("clicked");
     setGameState(initialState);
   }
   function updateScore(score: PlayerScore, winningPlayer: Player): void {
     const newScore = { ...score, [winningPlayer]: score[winningPlayer] + 1 };
     setPlayerScore(newScore);
   }
-  console.log(winningStrategy(initialState));
+  // console.log("winningStrategy", winningStrategy(gameState));
+  const win = JSON.stringify(winningStrategy(gameState));
+  // console.log(strategyMap[win]);
+
+  const secondDivider = `divider__${strategyMap[win]}`;
+  // console.log("secondDivider: ", secondDivider);
+
   return (
     <div className={styles.container}>
       <header className={styles.header}>
@@ -232,7 +249,11 @@ function App(): JSX.Element {
             );
           })}
         </div>
-        <div className={styles.divider}></div>
+        <div
+          className={`${styles.divider} ${
+            isWinningState(gameState) && styles[secondDivider]
+          }`}
+        ></div>
       </div>
       <section className={styles.restart}>
         <button className={styles.button} onClick={handleRestart}>
