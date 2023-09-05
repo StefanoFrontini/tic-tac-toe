@@ -25,6 +25,8 @@ function Cell({
   const Y = icon === "O" && <CircleIcon />;
 
   function handleClick(): void {
+    if (gameState[i] !== "empty") return;
+    if (player(gameState) === "O") return;
     const nextState = result(gameState, i);
     updateGameState(() => {
       // const nextState = result(prevState, i);

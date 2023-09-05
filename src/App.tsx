@@ -182,6 +182,7 @@ function App(): JSX.Element {
   }
 
   function computerMove(s: cellState[]): void {
+    if (terminal(s)) return;
     const bestValue = minValue(s);
     console.log("bestValue", bestValue);
     function getMove() {
@@ -227,7 +228,11 @@ function App(): JSX.Element {
         <Score player="X" score={playerScore.X} />
         <Score player="O" score={playerScore.O} />
       </section>
-      <GameInfo player={player(gameState)} isTerminal={terminal(gameState)} />
+      <GameInfo
+        player={player(gameState)}
+        isTerminal={terminal(gameState)}
+        isWinningState={isWinningState(gameState)}
+      />
       <div className={styles.main}>
         <div className={styles.board}>
           {gameState.map((el, index) => {
