@@ -2,6 +2,7 @@ import { Cell } from "./Cell";
 import { isWinningState } from "./lib/ai";
 import type { CellState, PlayerScore, Player } from "./lib/ai";
 import styles from "./Board.module.scss";
+import { motion } from "framer-motion";
 
 interface BoardProps {
   gameState: CellState[];
@@ -22,7 +23,7 @@ function Board({
   handleRestart,
 }: BoardProps): JSX.Element {
   return (
-    <div className={styles.main}>
+    <main className={styles.main}>
       <div className={styles.board}>
         {gameState.map((el, index) => {
           return (
@@ -39,17 +40,23 @@ function Board({
           );
         })}
       </div>
-      <div
-        className={`${styles.divider} ${
-          isWinningState(gameState) && styles[secondDivider]
+      <motion.div
+        animate={{
+          opacity: isWinningState(gameState) ? 1 : 0,
+        }}
+        transition={{ duration: 1 }}
+        className={`${
+          isWinningState(gameState)
+            ? styles.divider + " " + styles[secondDivider]
+            : ""
         }`}
-      ></div>
+      ></motion.div>
       <div className={styles.restart}>
         <button className={styles.button} onClick={handleRestart}>
           Restart game
         </button>
       </div>
-    </div>
+    </main>
   );
 }
 

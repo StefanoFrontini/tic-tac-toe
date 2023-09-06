@@ -23,7 +23,7 @@ function App(): JSX.Element {
   function computerMove(s: CellState[]): void {
     if (terminal(s)) return;
     const bestValue = minValue(s);
-    console.log("bestValue", bestValue);
+    // console.log("bestValue", bestValue);
     function getMove(): number {
       const bestMove = bestValue.results.find(
         (el) => el.value === bestValue.value
