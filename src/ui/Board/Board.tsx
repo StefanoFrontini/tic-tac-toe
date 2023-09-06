@@ -36,6 +36,7 @@ function Board({
               computerMove={computerMove}
               updateScore={updateScore}
               playerScore={playerScore}
+              handleRestart={handleRestart}
             />
           );
         })}

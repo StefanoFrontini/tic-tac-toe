@@ -2,7 +2,7 @@ import CircleIcon from "../../../components/CircleIcon";
 import CrossIcon from "../../../components/CrossIcon";
 import styles from "./Cell.module.scss";
 import type { Player, CellState, PlayerScore } from "../lib/ai";
-import { result, player, isWinningState } from "../lib/ai";
+import { result, player, isWinningState, terminal } from "../lib/ai";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface CellProps {
@@ -13,6 +13,7 @@ interface CellProps {
   computerMove: (s: CellState[]) => void;
   updateScore: (score: PlayerScore, winningPlayer: Player) => void;
   playerScore: PlayerScore;
+  handleRestart: () => void;
 }
 function Cell({
   icon,
@@ -22,6 +23,7 @@ function Cell({
   computerMove,
   updateScore,
   playerScore,
+  handleRestart,
 }: CellProps): JSX.Element {
   const empty = icon === "empty" && (
     <div key="empty" className={styles.empty}></div>
@@ -30,6 +32,10 @@ function Cell({
   const Y = icon === "O" && <CircleIcon />;
 
   function handleClick(): void {
+    if (terminal(gameState)) {
+      handleRestart();
+      return;
+    }
     if (gameState[i] !== "empty") return;
 
     if (player(gameState) === "O") return;
