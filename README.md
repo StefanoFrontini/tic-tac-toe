@@ -1,5 +1,22 @@
 # Tic-tac-toe
 
+## Links
+
+- [Live Site URL](https://tic-tac-toe-artificial-intelligence.netlify.app/)
+
+## Setup
+
+```bash
+# Install dependencies
+$ npm install
+
+# Run the dev server
+$ npm run dev
+
+# Build for production
+$ npm run build
+```
+
 ## Artificial Intelligence
 
 The AI is based upon the Minimax algorithm.
