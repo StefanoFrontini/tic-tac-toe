@@ -13,40 +13,39 @@ export const initialState: CellState[] = [
   "empty",
 ];
 
-interface Moves {
+interface MovesCount {
   X?: number;
   O?: number;
   empty?: number;
 }
 
-// player(s): function that returns whick player to move in state s
-export function player(s: CellState[]): Player {
-  const moves = s.reduce((acc: Moves, item) => {
-    if (item === "X") {
-      if (!acc["X"]) {
-        acc["X"] = 1;
-      } else {
-        acc["X"] = acc["X"] + 1;
-      }
-    }
-    if (item === "O") {
-      if (!acc["O"]) {
-        acc["O"] = 1;
-      } else {
-        acc["O"] = acc["O"] + 1;
-      }
-    }
-    if (item === "empty") {
-      if (!acc["empty"]) {
-        acc["empty"] = 1;
-      } else {
-        acc["empty"] = acc["empty"] + 1;
-      }
-    }
+function increaseMovesCount(
+  moves: MovesCount,
+  cellState: CellState
+): MovesCount {
+  if (!moves[cellState]) {
+    moves[cellState] = 1;
+  } else {
+    moves[cellState] = moves[cellState]! + 1;
+  }
+  return moves;
+}
+
+function getMovesCount(s: CellState[]): MovesCount {
+  return s.reduce((acc: MovesCount, item) => {
+    if (item === "X") acc = increaseMovesCount(acc, "X");
+    if (item === "O") acc = increaseMovesCount(acc, "O");
+    if (item === "empty") acc = increaseMovesCount(acc, "empty");
     return acc;
   }, {});
-  if (moves["empty"] === 9) return "X";
-  const nextPlayer = (moves["X"] ?? 0) > (moves["O"] ?? 0) ? "O" : "X";
+}
+
+// player(s): function that returns whick player to move in state s
+export function player(s: CellState[]): Player {
+  const movesCount = getMovesCount(s);
+  if (movesCount["empty"] === 9) return "X";
+  const nextPlayer =
+    (movesCount["X"] ?? 0) > (movesCount["O"] ?? 0) ? "O" : "X";
   return nextPlayer;
 }
 
